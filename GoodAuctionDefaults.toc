@@ -1,0 +1,6 @@
+## Interface: 80000
+## Title: GoodAuctionDefaults
+## Notes: Sets good default values in Blizzard's auction house UI.
+## SavedVariables: GoodAuctionDefaultsPrices
+
+GoodAuctionDefaults.lua
