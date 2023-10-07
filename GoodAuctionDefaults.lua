@@ -23,13 +23,26 @@ local function AuctionSellItemButton_OnEvent(self, event, ...)
 
   local item_id = select(10, GetAuctionSellItemInfo())
   if item_id then
-    -- Item was added to the "for sale" slot.
+    local name = select(1, GetAuctionSellItemInfo())
+    local count = select(3, GetAuctionSellItemInfo())
+    local price = select(6, GetAuctionSellItemInfo())
+    print(name .. ' x ' .. count .. ': Vendor price = ' .. price .. 'c')
+
+    -- Default the duration to the longest (24 hours)
+    AuctionsShortAuctionButton:SetChecked(nil)
+    AuctionsMediumAuctionButton:SetChecked(nil)
+    AuctionsLongAuctionButton:SetChecked(1)
+    AuctionFrameAuctions.duration = 3
+    UpdateDeposit()
+
+    -- This item was added to the "for sale" slot
     last_item_id = item_id
-    local price = get_saved_prices()[item_id]
-    if price then
+    local saved_price_per_unit = get_saved_prices()[item_id]
+    if saved_price_per_unit then
       -- We've sold this item before - fill in a default price.
-      MoneyInputFrame_SetCopper(StartPrice, price)
-      MoneyInputFrame_SetCopper(BuyoutPrice, price)
+      local saved_price = saved_price_per_unit * count
+      MoneyInputFrame_SetCopper(StartPrice, saved_price)
+      MoneyInputFrame_SetCopper(BuyoutPrice, saved_price)
     end
   end
 end
@@ -42,12 +55,9 @@ local function AuctionsCreateAuctionButton_OnClick()
   if last_item_id and LAST_ITEM_BUYOUT then
     -- After StartAuction() is called, the money input frame is zeroed out, so
     -- grab the price captured in a global variable by Blizzard code.
-    get_saved_prices()[last_item_id] = LAST_ITEM_BUYOUT
+    get_saved_prices()[last_item_id] = math.ceil(LAST_ITEM_BUYOUT / LAST_ITEM_COUNT)
   end
 end
 
 AuctionsCreateAuctionButton:HookScript('OnClick',
     AuctionsCreateAuctionButton_OnClick)
-
-AuctionFrameAuctions.priceType = 1 -- default the price type to "per unit"
-AuctionFrameAuctions.duration = 3 -- default the duration to "48 hours"

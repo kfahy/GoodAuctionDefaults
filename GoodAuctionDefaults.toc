@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 11404
 ## Title: GoodAuctionDefaults
 ## Notes: Sets good default values in Blizzard's auction house UI.
 ## SavedVariables: GoodAuctionDefaultsPrices
